@@ -1,0 +1,17 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+  background-color: blue;
+}
+button {
+  background-color: orange;
+  color: white;
+}
+
+html {
+  background-color: black;
+}
+
+.chart-race {
+  background-color: blue;
+}
