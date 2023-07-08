@@ -6,12 +6,11 @@ import axios from 'axios';
 function App() {
   const [data, setData] = useState([]);
   const [racebar, setRaceBar] = useState([]);
-  const [currentDate, setCurrentDate] = useState(new Date(2023, 2, 9));
+  const [currentDate, setCurrentDate] = useState(new Date(2020, 5, 18));
 
   const fetchData = async () => {
     try {
-      const res = await axios.get('https://disease.sh/v3/covid-19/historical');
-      console.log(res.data);
+      const res = await axios.get('https://disease.sh/v3/covid-19/historical?lastdays=1000');
       setData(res.data);
     } catch (error) {
       console.error(error);
@@ -25,40 +24,51 @@ function App() {
   }, []);
 
   useEffect(() => {
-    handleChange()
-  }, [currentDate])
+    handleChange();
+  }, [currentDate]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const newDate = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        currentDate.getDate() + 1,
+      );
+      setCurrentDate(newDate);
+    }, 1000);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [currentDate]);
 
   function handleChange() {
-    const outputJson = data.map((item, index) => {
-      console.log(item.timeline.cases.date);
-      return {
-        id: index,
-        title: item.country,
-        value: item.timeline.cases[formattedDate],
-        color: getRandomColor()
-      };
-    });
-    console.log(outputJson);
+    const outputJson = data.map((item, index) => ({
+      id: index,
+      title: item.country,
+      value: item.timeline.cases[formattedDate],
+      color: '#000'
+    }));
     setRaceBar(outputJson);
   }
 
-  const handlerPrevDate = () => {
+  function handlerPrevDate() {
     const newDate = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate() - 1,
     );
     setCurrentDate(newDate);
-  };
+  }
 
-  const handlerNextDate = () => {
+  function handlerNextDate() {
     const newDate = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate() + 1,
     );
     setCurrentDate(newDate);
-  };
+  }
 
   function getRandomColor() {
     const letters = "0123456789ABCDEF";
@@ -71,30 +81,24 @@ function App() {
 
   return (
     <div className="container">
-      <button className="btn" onClick={handleChange}>
-        Click Me!
-      </button>
-      <div style={{
-        display: 'flex',
-        flexDirection: 'row'
-      }}>
-        <h2 onClick={() => handlerPrevDate()}>{'<< '}</h2>
-        <h2>{formattedDate}</h2>
-        <h2 onClick={() => handlerNextDate()}>{' >>'}</h2>
+      <div>
+        <h1 style={{ textAlign: 'center' }}>Covid Global Cases</h1>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+          <h2 onClick={handlerPrevDate}>{'<< '}</h2>
+          <h2>{formattedDate}</h2>
+          <h2 onClick={handlerNextDate}>{' >>'}</h2>
+        </div>
       </div>
 
       <ChartRace
         data={racebar}
         backgroundColor="#fff"
-        width={600}
-        padding={12}
+        width={1080}
+        padding={5}
         itemHeight={30}
         gap={20}
         titleStyle={{ font: "normal 400 10px Arial", color: "#000" }}
-        valueStyle={{
-          font: "normal 400 11px Arial",
-          color: "#000"
-        }}
+        valueStyle={{ font: "normal 400 11px Arial", color: "#000" }}
       />
     </div>
   );
