@@ -1,55 +1,38 @@
 import { React, useState, useEffect } from "react";
 import ChartRace from "react-chart-race";
 import "./styles.css";
-
+import axios from 'axios'
 function App() {
   const [data, setData] = useState([]);
+  const [racebar, setReceBar] = useState([])
 
-  function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  const fetchData = async () => {
+    try {
+      const res = await axios.get('https://disease.sh/v3/covid-19/historical')
+      console.log(res.data)
+      setData(res.data)
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   useEffect(() => {
-    const data = [
-      {
-        id: 0,
-        title: "GOOGL",
-        value: getRandomInt(0.2, 10),
-        color: "#D1B70A"
-      },
-      {
-        id: 1,
-        title: "AAPL",
-        value: getRandomInt(0.2, 10),
-        color: "#DBB20B"
-      },
-      { id: 2, title: "BABA", value: getRandomInt(0.2, 10), color: "#C49000" },
-      { id: 3, title: "FB", value: getRandomInt(0.2, 10), color: "#DB960B" },
-      { id: 4, title: "MSFT", value: getRandomInt(0.2, 10), color: "#D47F00" },
-      { id: 5, title: "NVDA", value: getRandomInt(0.2, 10), color: "#D65F00" }
-    ];
-
-    setData([...data]);
+    fetchData()
   }, []);
 
   function handleChange() {
-    const data = [
-      {
-        id: 0,
-        title: "GOOGL",
-        value: getRandomInt(0.2, 10),
+    const outputJson = data.map((item, index) => {
+      console.log(item.timeline.cases.date)
+      return {
+        id: index,
+        title: item.country,
+        value: item.timeline.cases["2/8/23"],
         color: "#D1B70A"
-      },
-      { id: 1, title: "AAPL", value: getRandomInt(0.2, 10), color: "#DBB20B" },
-      { id: 2, title: "BABA", value: getRandomInt(0.2, 10), color: "#C49000" },
-      { id: 3, title: "FB", value: getRandomInt(0.2, 10), color: "#DB960B" },
-      { id: 4, title: "MSFT", value: getRandomInt(0.2, 10), color: "#D47F00" },
-      { id: 5, title: "NVDA", value: getRandomInt(0.2, 10), color: "#D65F00" }
-    ];
-
-    setData([...data]);
+      }
+    })
+    console.log(outputJson)
+    setReceBar(outputJson)
+    console.log(data[0].timeline.cases["2/8/23"])
   }
 
   return (
@@ -58,7 +41,7 @@ function App() {
         Click Me!
       </button>
       <ChartRace
-        data={data}
+        data={racebar}
         backgroundColor="#000"
         width={600}
         padding={12}
