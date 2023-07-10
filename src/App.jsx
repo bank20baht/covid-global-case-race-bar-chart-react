@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import ChartRace from "react-chart-race";
 import "./styles.css";
 import axios from 'axios';
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
+
 const COLORS = [
   "#FF0000",
   "#00FF00",
@@ -70,11 +71,6 @@ function App() {
     };
   }, []);
 
-  function handleReset() {
-    const resetDate = new Date(2020, 6, 1)
-    setCurrentDate(resetDate)
-  }
-
   function handleChange() {
     const formattedDate = currentDate.toLocaleString('en-US', {
       month: 'numeric',
@@ -114,12 +110,9 @@ function App() {
 
   return (
     <div className="container">
-      <div>
+      <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
         <h1 style={{ textAlign: 'center' }}>Covid Global Cases By Nattapong Promthong</h1>
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-          <text>Date: {formattedDate}</text>
-          <text onClick={handleReset} >{' reset'}</text>
-        </div>
+        <text style={{ textAlign: 'center' }}>Date: {formattedDate}</text>
       </div>
       <ChartRace
         data={racebar}
@@ -127,7 +120,7 @@ function App() {
         width={1280}
         padding={5}
         itemHeight={30}
-        gap={20}
+        gap={5}
         titleStyle={{ font: "normal 400 10px Arial", color: "#000" }}
         valueStyle={{ font: "normal 400 11px Arial", color: "#000" }}
       />
